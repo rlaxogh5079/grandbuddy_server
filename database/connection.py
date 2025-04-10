@@ -46,7 +46,7 @@ class DBObject:
     @staticmethod
     def _build_db_url(user, password, host, port, name):
         return (
-            f"mysql+pymysql://{urllib.parse.quote_plus(user)}:"
+            f"postgresql://{urllib.parse.quote_plus(user)}:"
             f"{urllib.parse.quote_plus(password)}@{host}:{port}/"
             f"{urllib.parse.quote_plus(name)}"
         )
