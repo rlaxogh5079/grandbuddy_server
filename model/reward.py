@@ -1,7 +1,7 @@
 from sqlalchemy import String, DateTime, Text, Integer, ForeignKeyConstraint
 from sqlalchemy.orm import Mapped, mapped_column
-from datetime import datetime
-from model.base import Base
+from datetime import datetime, timezone
+from model.base_class import Base
 import uuid
 
 class Reward(Base):
@@ -20,7 +20,7 @@ class Reward(Base):
         Text, nullable = True
     )
     created: Mapped[datetime] = mapped_column(
-        DateTime, default = lambda: datetime.now()
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
     
     __table_args__ = (

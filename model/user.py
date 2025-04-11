@@ -1,7 +1,7 @@
 from sqlalchemy import String, DateTime, Text, Enum as SQLEnum
 from sqlalchemy.orm import Mapped, mapped_column
-from datetime import datetime
-from model.base import Base
+from datetime import datetime, timezone
+from model.base_class import Base
 from enum import Enum
 import uuid
 
@@ -37,10 +37,10 @@ class User(Base):
         SQLEnum(UserRole), nullable = False
     )
     created: Mapped[datetime] = mapped_column(
-        DateTime, default = lambda: datetime.now()
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
     updated: Mapped[datetime] = mapped_column(
-        DateTime, default = lambda: datetime.now()
+        DateTime(timezone=True), default = lambda: datetime.now()
     )
     address: Mapped[str] = mapped_column(
         Text, nullable = True, default = None

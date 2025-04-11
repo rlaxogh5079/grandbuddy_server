@@ -1,34 +1,20 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from contextlib import contextmanager
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from sqlalchemy.exc import SQLAlchemyError
 import urllib.parse
 import os
 import logging
+from dotenv import load_dotenv
 
 logging.basicConfig(level=logging.ERROR)
 
 class DBObject:
-    _instance = None
-
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-            cls._instance._init_db()
-        return cls._instance
-
-    def _init_db(self):
-        db_config = self._get_db_config()
-        db_url = self._build_db_url(**db_config)
-        
-        try:
-            self.engine = create_engine(db_url)
-            self.Session = sessionmaker(bind=self.engine)
-        except Exception as e:
-            logging.error(f"데이터베이스 연결 오류: {e}")
-            raise RuntimeError("데이터베이스 연결에 실패했습니다. 환경 변수를 확인하세요.") from e
+    engine = None
+    async_session = None
 
     @staticmethod
-    def _get_db_config():
+    def init_async_db():
+        load_dotenv()
+
         db_config = {
             "user": os.getenv("DB_USER"),
             "password": os.getenv("DB_PASSWORD"),
@@ -36,33 +22,35 @@ class DBObject:
             "port": os.getenv("DB_PORT"),
             "name": os.getenv("DB_NAME"),
         }
-        
-        if None in db_config.values():
-            missing_keys = [k for k, v in db_config.items() if v is None]
-            raise RuntimeError(f"환경 변수 누락: {', '.join(missing_keys)}. .env 파일을 확인하세요.")
-        
-        return db_config
 
-    @staticmethod
-    def _build_db_url(user, password, host, port, name):
-        return (
-            f"postgresql://{urllib.parse.quote_plus(user)}:"
-            f"{urllib.parse.quote_plus(password)}@{host}:{port}/"
-            f"{urllib.parse.quote_plus(name)}"
+        if None in db_config.values():
+            missing = [k for k, v in db_config.items() if v is None]
+            raise RuntimeError(f"환경 변수 누락: {', '.join(missing)}. .env 파일을 확인하세요.")
+
+        db_url = (
+            f"postgresql+asyncpg://{urllib.parse.quote_plus(db_config['user'])}:"
+            f"{urllib.parse.quote_plus(db_config['password'])}@{db_config['host']}:{db_config['port']}/"
+            f"{urllib.parse.quote_plus(db_config['name'])}"
         )
 
-    def get_session(self):
-        return self.Session()
-
-    @contextmanager
-    def session_scope(self):
-        session = self.get_session()
         try:
-            yield session
-            session.commit()
+            DBObject.engine = create_async_engine(db_url, echo=True)
+            DBObject.async_session = async_sessionmaker(
+                bind=DBObject.engine,
+                class_=AsyncSession,
+                expire_on_commit=False,
+            )
         except Exception as e:
-            session.rollback()
-            logging.error(f"SQL 오류 발생: {e}")
-            raise
-        finally:
-            session.close()
+            logging.error(f"데이터베이스 연결 오류: {e}")
+            raise RuntimeError("데이터베이스 연결에 실패했습니다.") from e
+
+    @staticmethod
+    async def get_db():
+        if DBObject.async_session is None:
+            raise RuntimeError("DB 초기화되지 않음. init_async_db()를 먼저 호출하세요.")
+        async with DBObject.async_session() as session:
+            try:
+                yield session
+            except SQLAlchemyError as e:
+                await session.rollback()
+                raise e
