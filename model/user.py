@@ -31,7 +31,7 @@ class User(Base):
         String(15), unique = True, nullable = False
     )
     birthday: Mapped[datetime] = mapped_column(
-        DateTime
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
     role: Mapped[UserRole] = mapped_column(
         SQLEnum(UserRole), nullable = False
@@ -40,7 +40,7 @@ class User(Base):
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
     updated: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default = lambda: datetime.now()
+        DateTime(timezone=True), default = lambda: datetime.now(timezone.utc)
     )
     address: Mapped[str] = mapped_column(
         Text, nullable = True, default = None
