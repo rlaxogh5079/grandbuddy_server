@@ -1,10 +1,10 @@
+from controller.user_controller import user_controller
 from database.connection import DBObject
-from router.user_router import user_router
 from fastapi import FastAPI
 import uvicorn
 
 app = FastAPI()
-app.include_router(user_router)
+app.include_router(user_controller)
 
 @app.on_event("startup")
 async def startup():
