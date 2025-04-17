@@ -5,7 +5,7 @@ from model.base_class import Base
 from model import user, match, message, request, review, reward, task
 
 async def create_all():
-    DBObject.init_async_db()
+    await DBObject.init_async_db()
     async with DBObject.engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 

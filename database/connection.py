@@ -12,7 +12,7 @@ class DBObject:
     async_session = None
 
     @staticmethod
-    def init_async_db():
+    async def init_async_db():
         load_dotenv()
 
         db_config = {
