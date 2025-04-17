@@ -33,7 +33,7 @@ class Request(Base):
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
     completed: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default = None
+        DateTime(timezone=True), default = None, nullable = True
     )
     
     __table_args__ = (
@@ -42,3 +42,14 @@ class Request(Base):
             ["user.user_uuid"]
         ),
     )
+    
+    def get_attributes(self) -> dict:
+        return {
+            "request_uuid": self.request_uuid,
+            "senior_uuid": self.senior_uuid,
+            "title": self.title,
+            "description": self.description,
+            "status": self.status.name,  # Enum은 이름으로 반환
+            "created": self.created.isoformat() if self.created else None,
+            "completed": self.completed.isoformat() if self.completed else None,
+        }

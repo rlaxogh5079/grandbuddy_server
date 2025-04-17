@@ -1,19 +1,14 @@
-from model.user import VerifyErrorCode, CreateUserModel, User
 from repository.user_repository import UserRepository
 from model.response import ResponseStatusCode, Detail
 from fastapi.security import OAuth2PasswordBearer
-from email.mime.multipart import MIMEMultipart
+from model.schema.user import CreateUserModel
 from service.auth_service import AuthService
-from email.mime.text import MIMEText
 from model.auth import TokenModel
-from datetime import datetime
 from fastapi import Depends
-from random import randint
+from model.user import User
 from typing import Tuple
 import traceback
 import logging
-import smtplib
-import os
 
 email_session = {}
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/user/token")

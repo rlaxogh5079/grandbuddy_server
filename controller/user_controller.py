@@ -1,8 +1,9 @@
-from model.user import CreateUserModel, LoginModel, UpdateUserModel, User
+from model.schema.user import CreateUserModel, LoginModel, UpdateUserModel
 from model.response import ResponseModel, ResponseStatusCode, Detail
 from fastapi.security import OAuth2PasswordRequestForm
 from service.user_service import UserService
 from fastapi import APIRouter, Depends
+from model.user import User
 from typing import Tuple
 
 user_controller = APIRouter(
