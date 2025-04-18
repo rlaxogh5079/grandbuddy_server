@@ -7,7 +7,7 @@ from model.schema.user import UserRole
 from model.user import User
 from typing import Tuple
 
-request_controller = APIRouter(prefix="/request", tags=["도움 요청"])
+request_controller = APIRouter(prefix="/request", tags=["request"])
 
 # 1. 요청 생성 (senior만 가능)
 @request_controller.post("", name="도움 요청 생성")

@@ -4,7 +4,7 @@ from model.response import ResponseModel
 from fastapi import APIRouter, Depends
 from model.response import Detail
 
-match_controller = APIRouter(prefix="/match", tags=["Match"])
+match_controller = APIRouter(prefix="/match", tags=["match"])
 
 @match_controller.post("", name="매칭 생성")
 async def create_match(data: CreateMatchModel):
