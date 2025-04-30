@@ -6,8 +6,9 @@ from enum import Enum
 import uuid
 
 class TaskStatus(Enum):
-    pending = 0 # 진행 중
-    completed = 1 # 완료
+    pending = 0   # 대기
+    in_progress = 1  # 진행
+    completed = 2  # 완료
 
 class Task(Base):
     __tablename__ = "task"

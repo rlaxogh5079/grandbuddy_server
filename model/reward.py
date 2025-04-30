@@ -1,8 +1,17 @@
-from sqlalchemy import String, DateTime, Text, Integer, ForeignKeyConstraint
+from sqlalchemy import String, DateTime, Text, Integer, ForeignKeyConstraint, Enum as SQLEnum
 from sqlalchemy.orm import Mapped, mapped_column
 from datetime import datetime, timezone
 from model.base_class import Base
+from enum import Enum
 import uuid
+
+class RewardStatus(Enum):
+    awarded = 0 # 활성화
+    canceld = 1 # 취소됨
+    refunded = 2 # 환불됨
+
+
+# Reward 모델에 필드 추가
 
 class Reward(Base):
     __tablename__ = "reward"
@@ -15,6 +24,9 @@ class Reward(Base):
     )
     points: Mapped[int] = mapped_column(
         Integer, nullable = False
+    )
+    status: Mapped[RewardStatus] = mapped_column(
+       SQLEnum(RewardStatus), default=RewardStatus.awarded, nullable=False
     )
     description: Mapped[str] = mapped_column(
         Text, nullable = True

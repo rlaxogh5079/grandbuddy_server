@@ -8,8 +8,7 @@ import uuid
 class MatchStatus(Enum):
     accepted = 0 # 수락 됨
     declined = 1 # 거절 됨
-    in_progress = 2 # 진행 중
-    completed = 3 # 완료 됨
+    completed = 2 # 완료 됨
 
 class Match(Base):
     __tablename__ = "match"
