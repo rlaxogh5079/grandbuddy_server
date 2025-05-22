@@ -91,3 +91,10 @@ async def delete_request(
         return ResponseModel.show_json(status_code, message = "요청 삭제 실패", detail=result.text)
 
     return ResponseModel.show_json(status_code, message = "요청이 성공적으로 삭제되었습니다.")
+
+@request_controller.get("/explore/all", name="청년용 요청 둘러보기")
+async def get_pending_requests_for_youth():
+    status_code, result = await RequestService.get_pending_requests_for_youth()
+    if isinstance(result, Detail):
+        return ResponseModel.show_json(status_code=status_code, message="요청 조회 실패", detail=result.text)
+    return ResponseModel.show_json(status_code=status_code, message="요청 조회 성공", requests=result)

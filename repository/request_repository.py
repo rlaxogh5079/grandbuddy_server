@@ -53,3 +53,11 @@ class RequestRepository:
             except SQLAlchemyError as e:
                 await session.rollback()
                 raise e
+    
+    @staticmethod
+    async def get_pending_requests_for_youth() -> list[Request]:
+        async for session in DBObject.get_db():
+            result = await session.execute(
+                select(Request).where(Request.status == RequestStatus.pending)
+            )
+            return result.scalars().all()
