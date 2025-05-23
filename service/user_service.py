@@ -87,6 +87,23 @@ class UserService:
                     None, e, e.__traceback__))}"
             )
             return (ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(str(e)))
+        
+    @staticmethod
+    async def get_user(user_uuid: str) -> Tuple[ResponseStatusCode, Detail | User]:
+        try:
+            user = await UserRepository.find_user(by = "user_uuid", value = user_uuid)
+            if not user:
+                return (ResponseStatusCode.NOT_FOUND, Detail(f"'{user_uuid}'의 유저를 찾을 수 없습니다."))
+
+            return (ResponseStatusCode.SUCCESS, user)
+            
+        except Exception as e:
+            logging.error(
+                f"{e}: {''.join(traceback.format_exception(
+                    None, e, e.__traceback__))}"
+            )
+            return (ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(str(e)))
+        
 
     @staticmethod
     async def update_user(user: User, password: str | None = None, nickname: str | None = None, email: str | None = None, profile: str | None = None) -> Tuple[ResponseStatusCode, Detail | User]:

@@ -67,3 +67,12 @@ class RequestService:
             return ResponseStatusCode.NO_CONTENT, None
         except Exception as e:
             return ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(text=f"요청 삭제 실패: {str(e)}")
+
+    @staticmethod
+    async def get_pending_requests_for_youth():
+        try:
+            requests = await RequestRepository.get_pending_requests_for_youth()
+            request_list = [req.get_attributes() for req in requests]
+            return ResponseStatusCode.SUCCESS, request_list
+        except Exception as e:
+            return ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(text=str(e))

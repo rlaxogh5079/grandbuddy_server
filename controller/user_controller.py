@@ -20,6 +20,13 @@ async def get_profile(result: Tuple[ResponseStatusCode, User | Detail] = Depends
 
     return ResponseModel.show_json(status_code=status_code, message="유저 정보를 성공적으로 불러왔습니다.", user=result.get_attributes())
 
+@user_controller.get("/{user_uuid}", name="유저 조회")
+async def get_user(user_uuid: str):
+    status_code, result = await UserService.get_user(user_uuid)
+    if isinstance(result, Detail):
+        return ResponseModel.show_json(status_code=status_code, message="유저 정보를 불러오는데 실패하였습니다.", detail=result.text)
+
+    return ResponseModel.show_json(status_code=status_code, message="유저 정보를 성공적으로 불러왔습니다.", user=result.get_attributes())
 
 @user_controller.post("", name="회원가입")
 async def signup(user: CreateUserModel):
