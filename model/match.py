@@ -2,6 +2,7 @@ from sqlalchemy import String, DateTime, ForeignKeyConstraint, Enum as SQLEnum
 from sqlalchemy.orm import Mapped, mapped_column
 from datetime import datetime, timezone
 from model.base_class import Base
+from typing import Dict, Any
 from enum import Enum
 import uuid
 
@@ -41,3 +42,11 @@ class Match(Base):
         )
     )
     
+    def get_attributes(self) -> Dict[str, Any]:
+        return {
+            "match_uuid": self.match_uuid,
+            "request_uuid": self.request_uuid,
+            "youth_uuid": self.youth_uuid,
+            "status": self.status.name,
+            "created": self.created.isoformat() if self.created else None
+        }

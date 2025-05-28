@@ -54,3 +54,4 @@ class UserRepository:
             stmt = select(User).where(getattr(User, by) == value)
             result = await session.execute(stmt)
             return result.scalar_one_or_none() is not None
+    
