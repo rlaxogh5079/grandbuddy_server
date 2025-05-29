@@ -26,7 +26,7 @@ class ReviewService:
             review = await ReviewRepository.get_review_by_request_uuid(request_uuid)
             if not review:
                 return ResponseStatusCode.NOT_FOUND, Detail(text="리뷰를 찾을 수 없습니다.")
-            return ResponseStatusCode.OK, {
+            return ResponseStatusCode.SUCCESS, {
                 "review_uuid": review.review_uuid,
                 "rating": float(review.rating),
                 "content": review.content,
@@ -39,7 +39,7 @@ class ReviewService:
     async def delete_review(review_uuid: str) -> tuple[ResponseStatusCode, str | Detail]:
         try:
             await ReviewRepository.delete_review(review_uuid)
-            return ResponseStatusCode.OK, "리뷰 삭제 완료"
+            return ResponseStatusCode.SUCCESS, "리뷰 삭제 완료"
         except Exception as e:
             return ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(text=str(e))
 
@@ -47,6 +47,6 @@ class ReviewService:
     async def update_review(review_uuid: str, rating: float, content: str | None) -> tuple[ResponseStatusCode, str | Detail]:
         try:
             await ReviewRepository.update_review(review_uuid, rating, content)
-            return ResponseStatusCode.OK, "리뷰 수정 완료"
+            return ResponseStatusCode.SUCCESS, "리뷰 수정 완료"
         except Exception as e:
             return ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(text=str(e))

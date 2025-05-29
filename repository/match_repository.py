@@ -1,4 +1,4 @@
-from model.match import Match
+from model.match import Match, MatchStatus
 from database.connection import DBObject
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.future import select
@@ -28,6 +28,19 @@ class MatchRepository:
                 )
                 return result.scalar_one_or_none()
             
+            except SQLAlchemyError as e:
+                await session.rollback()
+                raise e
+            
+    @staticmethod
+    async def get_match_by_user_uuid(user_uuid: str) -> Optional[list[Match]]:
+        async for session in DBObject.get_db():
+            try:
+                result = await session.execute(
+                    select(Match).where(Match.youth_uuid == user_uuid)
+                )
+                return result.scalars().all()
+
             except SQLAlchemyError as e:
                 await session.rollback()
                 raise e
@@ -72,3 +85,17 @@ class MatchRepository:
             except SQLAlchemyError as e:
                 await session.rollback()
                 raise e
+            
+    @staticmethod
+    async def get_match_by_match_uuid(match_uuid: str) -> Optional[Match]:
+        async for session in DBObject.get_db():
+            try:
+                result = await session.execute(
+                    select(Match).where(Match.match_uuid == match_uuid and Match.status == MatchStatus.accepted)
+                )
+                return result.scalar_one_or_none()
+            
+            except SQLAlchemyError as e:
+                await session.rollback()
+                raise e
+    

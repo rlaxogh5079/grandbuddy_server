@@ -27,7 +27,11 @@ async def create_match(
 
 @match_controller.delete("/{match_uuid}", name="매칭 삭제")
 async def delete_match(match_uuid: str):
-    status_code, result = await MatchService.delete_match(match_uuid)
+    status_code, result = await MatchService.get_match_by_uuid(match_uuid)
+    if isinstance(result, Detail):
+        return ResponseModel.show_json(status_code=status_code, message="매칭 조회 실패", detail=result.text)
+        
+    status_code, result = await MatchService.delete_match(result.request_uuid, match_uuid)
     if isinstance(result, Detail):
         return ResponseModel.show_json(status_code=status_code, message="매칭 삭제 실패", detail=result.text)
     return ResponseModel.show_json(status_code=status_code, message="매칭 삭제 성공")
@@ -49,3 +53,42 @@ async def search_match(
     if status_code == ResponseStatusCode.NOT_FOUND:
         return ResponseModel.show_json(status_code = status_code, message = "매칭 검색 성공")    
     return ResponseModel.show_json(status_code = status_code, message = "매칭 검색 성공", match = result.get_attributes())
+
+@match_controller.get("/me", name="내가 수락한 요청 조회")
+async def get_my_match(
+    user_result: tuple[ResponseStatusCode, User] = Depends(UserService.get_current_user)
+):
+    status_code, result = user_result
+    if isinstance(result, Detail):
+        return ResponseModel.show_json(status_code = status_code, message = "유저 변환 실패", detail = result.text)
+    
+    user = result
+    status_code, result = await MatchService.get_match_by_user(user)
+    if isinstance(result, Detail):
+        return ResponseModel.show_json(status_code = status_code, message = "매칭 검색 실패", detail = result.text)
+    
+    if status_code == ResponseStatusCode.NOT_FOUND:
+        return ResponseModel.show_json(status_code = status_code, message = "매칭 검색 성공")    
+    return ResponseModel.show_json(status_code = status_code, message = "매칭 검색 성공", matches = list(map(lambda x: x.get_attributes(), result)))
+
+@match_controller.patch("/complete/{match_uuid}")
+async def complete_match(
+    match_uuid: str,
+    user_result: tuple[ResponseStatusCode, User] = Depends(UserService.get_current_user)
+):
+    status_code, result = user_result
+    if isinstance(result, Detail):
+        return ResponseModel.show_json(status_code = status_code, message = "유저 변환 실패", detail = result.text)
+    
+    user = result
+    status_code, result = await MatchService.get_match_by_uuid(match_uuid)
+    if isinstance(result, Detail):
+        return ResponseModel.show_json(status_code = status_code, message = "매칭 검색 실패", detail = result.text)
+    
+    match = result
+
+    status_code, result = await MatchService.complete_match(match.request_uuid, match_uuid)
+    if isinstance(result, Detail):
+        return ResponseModel.show_json(status_code = status_code, messsage = "실패", detail = result.text)
+    
+    return ResponseModel.show_json(status_code = status_code, message = "성공")
