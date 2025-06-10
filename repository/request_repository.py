@@ -2,6 +2,7 @@ from model.request import Request, RequestStatus
 from sqlalchemy import select, update, delete
 from sqlalchemy.exc import SQLAlchemyError
 from database.connection import DBObject
+from model.application import Application
 
 class RequestRepository:
     @staticmethod
@@ -71,3 +72,11 @@ class RequestRepository:
             except SQLAlchemyError as e:
                 await session.rollback()
                 raise e
+            
+    @staticmethod
+    async def get_applications_by_youth(youth_uuid: str) -> list[Application]:
+        async for session in DBObject.get_db():
+            result = await session.execute(
+                select(Application).where(Application.youth_uuid == youth_uuid)
+            )
+            return result.scalars().all()

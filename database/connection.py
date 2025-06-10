@@ -5,7 +5,7 @@ import os
 import logging
 from dotenv import load_dotenv
 
-logging.basicConfig(level=logging.ERROR)
+logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
 
 class DBObject:
     engine = None

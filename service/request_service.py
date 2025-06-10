@@ -77,6 +77,7 @@ class RequestService:
     async def get_pending_requests_for_youth():
         try:
             requests = await RequestRepository.get_pending_requests_for_youth()
+            print(requests)
             request_list = [req.get_attributes() for req in requests]
             return ResponseStatusCode.SUCCESS, request_list
         except Exception as e:
@@ -92,7 +93,7 @@ class RequestService:
 
     @staticmethod
     async def apply_to_request(request_uuid: str, applicant_uuid: str):
-        application = Application(request_uuid=request_uuid, applicant_uuid=applicant_uuid)
+        application = Application(request_uuid=request_uuid, youth_uuid=applicant_uuid)
         await ApplicationRepository.create_application(application)
         request = await RequestRepository.get_request_by_uuid(request_uuid)
         if request:
@@ -101,9 +102,25 @@ class RequestService:
         return application
 
     @staticmethod
-    async def accept_application(application_uuid: str):
-        application = await ApplicationRepository.get_application_by_uuid(application_uuid)
+    async def accept_application(youth_uuid: str):
+        application = await ApplicationRepository.get_application_by_uuid(youth_uuid)
         if not application:
             return ResponseStatusCode.NOT_FOUND, Detail(text="신청을 찾을 수 없습니다.")
-        await ApplicationRepository.update_application_status(application_uuid, ApplicationStatus.accepted.value)
+        await ApplicationRepository.update_application_status(youth_uuid, ApplicationStatus.accepted.value)
         return ResponseStatusCode.SUCCESS, None
+    
+    @staticmethod
+    async def get_requests_by_applicant(youth_uuid: str):
+        try:
+            applications = await ApplicationRepository.get_application_by_uuid(youth_uuid)
+            # 신청한 요청들의 request_uuid 모아서 해당 요청 리스트 조회
+            print(applications)
+            request_uuids = [app.request_uuid for app in applications]
+            requests = []
+            for request_uuid in request_uuids:
+                req = await RequestRepository.get_request_by_uuid(request_uuid)
+                if req:
+                    requests.append(req)
+            return ResponseStatusCode.SUCCESS, requests
+        except Exception as e:
+            return ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(text=str(e))

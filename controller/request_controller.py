@@ -98,10 +98,14 @@ async def delete_request(
 
 @request_controller.get("/explore/all", name="청년용 요청 둘러보기")
 async def get_pending_requests_for_youth():
-    status_code, result = await RequestService.get_pending_requests_for_youth()
-    if isinstance(result, Detail):
-        return ResponseModel.show_json(status_code=status_code, message="요청 조회 실패", detail=result.text)
-    return ResponseModel.show_json(status_code=status_code, message="요청 조회 성공", requests=result)
+    try:
+        status_code, result = await RequestService.get_pending_requests_for_youth()
+        if isinstance(result, Detail):
+            return ResponseModel.show_json(status_code=status_code, message="요청 조회 실패", detail=result.text)
+        return ResponseModel.show_json(status_code=status_code, message="요청 조회 성공", requests=result)
+    
+    except Exception as e:
+        print(e)
 
 @request_controller.post("/{request_uuid}/apply", name="신청")
 async def apply_to_request(
@@ -112,22 +116,35 @@ async def apply_to_request(
     if isinstance(user, Detail):
         return ResponseModel.show_json(status_code, message="유저 인증 실패", detail=user.text)
     application = await RequestService.apply_to_request(request_uuid, user.user_uuid)
-    return ResponseModel.show_json(ResponseStatusCode.SUCCESS, message="신청 완료", application_uuid=application.application_uuid)
+    return ResponseModel.show_json(ResponseStatusCode.SUCCESS, message="신청 완료", youth_uuid=application.youth_uuid)
 
-@request_controller.post("/{request_uuid}/accept/{application_uuid}", name="신청 수락")
+@request_controller.post("/{request_uuid}/accept/{youth_uuid}", name="신청 수락")
 async def accept_application(
     request_uuid: str,
-    application_uuid: str,
+    youth_uuid: str,
     current_user: Tuple[ResponseStatusCode, User | Detail] = Depends(UserService.get_current_user)
 ):
     status_code, user = current_user
     if isinstance(user, Detail):
         return ResponseModel.show_json(status_code, message="유저 인증 실패", detail=user.text)
     # 권한 체크(생략)
-    status, result = await RequestService.accept_application(application_uuid)
+    status, result = await RequestService.accept_application(youth_uuid)
     
     if status != ResponseStatusCode.SUCCESS:
         return ResponseModel.show_json(status, message="신청 수락 실패", detail=result.text)
     
-    await MatchService.create_match(request_uuid, application_uuid)
+    await MatchService.create_match(request_uuid, youth_uuid)
     return ResponseModel.show_json(ResponseStatusCode.SUCCESS, message="신청 수락 및 매칭 생성")
+
+@request_controller.get("/applied/me", name="내가 신청한 요청들 조회")
+async def get_my_applications(
+    current_user: Tuple[ResponseStatusCode, User | Detail] = Depends(UserService.get_current_user)
+):
+    status_code, user = current_user
+    if isinstance(user, Detail):
+        return ResponseModel.show_json(status_code, message="유저 인증 실패", detail=user.text)
+
+    status_code, result = await RequestService.get_requests_by_applicant(user.user_uuid)
+    if isinstance(result, Detail):
+        return ResponseModel.show_json(status_code, message="신청 목록 조회 실패", detail=result.text)
+    return ResponseModel.show_json(status_code, message="신청 목록 조회 성공", requests=[r.get_attributes() for r in result])
