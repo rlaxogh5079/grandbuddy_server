@@ -23,7 +23,7 @@ class RewardService:
     async def get_rewards_by_youth(youth_uuid: str) -> tuple[ResponseStatusCode, list[dict] | Detail]:
         try:
             rewards = await RewardRepository.get_rewards_by_youth_uuid(youth_uuid)
-            return ResponseStatusCode.OK, [
+            return ResponseStatusCode.SUCCESS, [
                 {
                     "reward_uuid": reward.reward_uuid,
                     "points": reward.points,
@@ -43,6 +43,6 @@ class RewardService:
                 return ResponseStatusCode.NOT_FOUND, Detail(text="보상을 찾을 수 없습니다.")
             reward.status = RewardStatus.refunded
             await RewardRepository.update_reward(reward)
-            return ResponseStatusCode.OK, "환불 완료"
+            return ResponseStatusCode.SUCCESS, "환불 완료"
         except Exception as e:
             return ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(text=str(e))

@@ -24,7 +24,7 @@ class TaskService:
     async def get_tasks_by_senior(senior_uuid: str) -> tuple[ResponseStatusCode, List[dict] | Detail]:
         try:
             tasks = await TaskRepository.get_tasks_by_senior(senior_uuid)
-            return ResponseStatusCode.OK, [
+            return ResponseStatusCode.SUCCESS, [
                 {
                     "task_uuid": t.task_uuid,
                     "title": t.title,
@@ -43,7 +43,7 @@ class TaskService:
             task = await TaskRepository.get_task_by_uuid(task_uuid)
             if not task:
                 return ResponseStatusCode.NOT_FOUND, Detail(text="해당 할 일을 찾을 수 없습니다.")
-            return ResponseStatusCode.OK, {
+            return ResponseStatusCode.SUCCESS, {
                 "task_uuid": task.task_uuid,
                 "title": task.title,
                 "description": task.description,
@@ -66,6 +66,6 @@ class TaskService:
             if "status" in updates:
                 updates["status"] = TaskStatus[updates["status"]]
             await TaskRepository.update_task(task_uuid, updates)
-            return ResponseStatusCode.OK, "할 일 수정 성공"
+            return ResponseStatusCode.SUCCESS, "할 일 수정 성공"
         except Exception as e:
             return ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(text=str(e))
