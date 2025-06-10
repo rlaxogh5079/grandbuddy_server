@@ -105,7 +105,7 @@ class UserService:
         
 
     @staticmethod
-    async def update_user(user: User, password: str | None = None, nickname: str | None = None, email: str | None = None, profile: str | None = None) -> Tuple[ResponseStatusCode, Detail | User]:
+    async def update_user(user: User, password: str | None = None, nickname: str | None = None, email: str | None = None, address: str | None = None) -> Tuple[ResponseStatusCode, Detail | User]:
         try:
             user_data = {}
 
@@ -115,8 +115,8 @@ class UserService:
                 user_data["nickname"] = nickname
             if email:
                 user_data["email"] = email
-            if profile:
-                user_data["profile"] = profile
+            if address:
+                user_data["address"] = address
 
             await UserRepository.update_user(user, user_data)
             user = await UserRepository.find_user("user_uuid", user.user_uuid)

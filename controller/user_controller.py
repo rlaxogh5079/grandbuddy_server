@@ -44,7 +44,7 @@ async def update(form_data: UpdateUserModel, result: Tuple[ResponseStatusCode, U
         return ResponseModel.show_json(status_code=status_code, message="유저 정보를 불러오는데 실패하였습니다.", detail=result.text)
 
     status_code, result = await UserService.update_user(
-        result, form_data.password, form_data.nickname, form_data.email, form_data.profile)
+        result, form_data.password, form_data.nickname, form_data.email, form_data.address)
     if isinstance(result, Detail):
         return ResponseModel.show_json(status_code=status_code, message="유저 정보를 수정하는데 실패하였습니다.", detail=result.text)
 
