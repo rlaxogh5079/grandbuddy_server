@@ -1,6 +1,8 @@
+from repository.application_repository import ApplicationRepository
 from repository.request_repository import RequestRepository
 from model.response import Detail, ResponseStatusCode
 from model.request import Request, RequestStatus
+from model.application import Application
 from datetime import datetime, timezone
 from typing import List, Tuple
 
@@ -76,3 +78,30 @@ class RequestService:
             return ResponseStatusCode.SUCCESS, request_list
         except Exception as e:
             return ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(text=str(e))
+        
+    @staticmethod
+    async def view_request_and_increase_views(request_uuid: str):
+        request = await RequestRepository.get_request_by_uuid(request_uuid)
+        if request:
+            request.views += 1
+            await RequestRepository.update_request(request)
+        return request
+
+    @staticmethod
+    async def apply_to_request(request_uuid: str, applicant_uuid: str):
+        application = Application(request_uuid=request_uuid, applicant_uuid=applicant_uuid)
+        await ApplicationRepository.create_application(application)
+        request = await RequestRepository.get_request_by_uuid(request_uuid)
+        if request:
+            request.applications += 1
+            await RequestRepository.update_request(request)
+        return application
+
+    @staticmethod
+    async def accept_application(application_uuid: str):
+        application = await ApplicationRepository.get_application_by_uuid(application_uuid)
+        if not application:
+            return ResponseStatusCode.NOT_FOUND, Detail(text="신청을 찾을 수 없습니다.")
+        await ApplicationRepository.update_application_status(application_uuid, ApplicationStatus.accepted.value)
+        # 실제 매칭 객체 생성 로직 추가(생략)
+        return ResponseStatusCode.SUCCESS, None

@@ -61,3 +61,13 @@ class RequestRepository:
                 select(Request).where(Request.status == RequestStatus.pending)
             )
             return result.scalars().all()
+    
+    @staticmethod
+    async def update_request(request: Request):
+        async for session in DBObject.get_db():
+            try:
+                await session.merge(request)
+                await session.commit()
+            except SQLAlchemyError as e:
+                await session.rollback()
+                raise e

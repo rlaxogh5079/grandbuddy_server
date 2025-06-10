@@ -36,6 +36,12 @@ class Request(Base):
         DateTime(timezone=True), default = None, nullable = True
     )
     
+    available_start_time: Mapped[datetime] = mapped_column(DateTime(timezone = True), nullable=True)
+    available_end_time: Mapped[datetime] = mapped_column(DateTime(timezone = True), nullable=True)
+
+    views: Mapped[int] = mapped_column(default=0)
+    applications: Mapped[int] = mapped_column(default=0)
+    
     __table_args__ = (
         ForeignKeyConstraint(
             ["senior_uuid"],
@@ -52,4 +58,8 @@ class Request(Base):
             "status": self.status.name,  # Enum은 이름으로 반환
             "created": self.created.isoformat() if self.created else None,
             "completed": self.completed.isoformat() if self.completed else None,
+            "available_start_time": self.available_start_time.isformat() if self.available_start_time else None,
+            "available_end_time": self.available_end_time.isformat() if self.available_end_time else None,
+            "views": self.views,
+            "applications": self.applications
         }
