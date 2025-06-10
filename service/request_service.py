@@ -15,7 +15,7 @@ class RequestService:
                 senior_uuid=senior_uuid,
                 title=title,
                 description=description,
-                date=date,
+                available_date=available_date,
                 available_start_time=available_start_time,
                 available_end_time=available_end_time,
             )

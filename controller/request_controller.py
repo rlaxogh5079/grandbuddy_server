@@ -27,7 +27,10 @@ async def create_request(
     status_code, result = await RequestService.create_request(
         senior_uuid=user.user_uuid,
         title=form_data.title,
-        description=form_data.description
+        description=form_data.description,
+        available_date = form_data.available_date,
+        available_start_time = form_data.available_start_time,
+        available_end_time = form_data.available_end_time
     )
     if isinstance(result, Detail):
         return ResponseModel.show_json(status_code, message = "요청 생성 실패", detail=result.text)
