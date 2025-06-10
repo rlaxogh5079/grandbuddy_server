@@ -1,8 +1,8 @@
 from repository.application_repository import ApplicationRepository
+from model.application import Application, ApplicationStatus
 from repository.request_repository import RequestRepository
 from model.response import Detail, ResponseStatusCode
 from model.request import Request, RequestStatus
-from model.application import Application
 from datetime import datetime, timezone
 from typing import List, Tuple
 
