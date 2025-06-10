@@ -46,7 +46,6 @@ class UserService:
                 birthday=user.birthday,
                 role=user.role,
                 address=user.address,
-                profile=user.profile,
             )
             
             if await UserRepository.check_exist_user("user_id", db_user.user_id):

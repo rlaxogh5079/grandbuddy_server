@@ -17,7 +17,6 @@ class CreateUserModel(BaseModel):
     birthday: datetime
     role: UserRole
     address: str
-    profile: str
 
 
 class LoginModel(BaseModel):
