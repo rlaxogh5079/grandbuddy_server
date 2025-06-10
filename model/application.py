@@ -27,3 +27,12 @@ class Application(Base):
         ForeignKeyConstraint(["request_uuid"], ["request.request_uuid"]),
         ForeignKeyConstraint(["youth_uuid"], ["user.user_uuid"]),
     )
+    
+    def get_attributes(self):
+        return {
+            "application_uuid": self.application_uuid,
+            "request_uuid": self.request_uuid,
+            "youth_uuid": self.youth_uuid,
+            "status": self.status,
+            "created": self.created.isoformat() if self.created else None
+        }
