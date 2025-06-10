@@ -17,7 +17,7 @@ class Application(Base):
         String(36), primary_key=True, default=lambda: str(uuid.uuid4())
     )
     request_uuid: Mapped[str] = mapped_column(String(36))
-    applicant_uuid: Mapped[str] = mapped_column(String(36))
+    youth_uuid: Mapped[str] = mapped_column(String(36))
     status: Mapped[str] = mapped_column(String(16), default=ApplicationStatus.pending.value)
     created: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
@@ -25,5 +25,5 @@ class Application(Base):
 
     __table_args__ = (
         ForeignKeyConstraint(["request_uuid"], ["request.request_uuid"]),
-        ForeignKeyConstraint(["applicant_uuid"], ["user.user_uuid"]),
+        ForeignKeyConstraint(["youth_uuid"], ["user.user_uuid"]),
     )

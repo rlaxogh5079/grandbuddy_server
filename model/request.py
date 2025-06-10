@@ -1,15 +1,15 @@
-from sqlalchemy import String, DateTime, Text, ForeignKeyConstraint, Enum as SQLEnum
+from sqlalchemy import String, DateTime, Text, ForeignKeyConstraint, Enum as SQLEnum, Time, Date
 from sqlalchemy.orm import Mapped, mapped_column
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 from model.base_class import Base
 from enum import Enum
 import uuid
 
 class RequestStatus(Enum):
-    pending = 0 # 대기 중
-    accepted = 1 # 처리 됨
-    completed = 2 # 완료 됨
-    canceld = 3 # 취소 됨
+    pending = 0      # 대기 중 (신청 받는 중)
+    accepted = 1     # 매칭되어 진행 중
+    completed = 2    # 완료
+    canceled = 3     # 취소
 
 class Request(Base):
     __tablename__ = "request"
@@ -36,8 +36,9 @@ class Request(Base):
         DateTime(timezone=True), default = None, nullable = True
     )
     
-    available_start_time: Mapped[datetime] = mapped_column(DateTime(timezone = True), nullable=True)
-    available_end_time: Mapped[datetime] = mapped_column(DateTime(timezone = True), nullable=True)
+    available_date: Mapped[date] = mapped_column(Date, nullable = True)
+    available_start_time: Mapped[Time] = mapped_column(Time(), nullable=True)
+    available_end_time: Mapped[Time] = mapped_column(Time(), nullable=True)
 
     views: Mapped[int] = mapped_column(default=0)
     applications: Mapped[int] = mapped_column(default=0)
@@ -55,11 +56,12 @@ class Request(Base):
             "senior_uuid": self.senior_uuid,
             "title": self.title,
             "description": self.description,
-            "status": self.status.name,  # Enum은 이름으로 반환
+            "status": self.status.name,
             "created": self.created.isoformat() if self.created else None,
             "completed": self.completed.isoformat() if self.completed else None,
-            "available_start_time": self.available_start_time.isformat() if self.available_start_time else None,
-            "available_end_time": self.available_end_time.isformat() if self.available_end_time else None,
+            "available_date": self.available_date.isoformat() if self.available_date else None,
+            "available_start_time": self.available_start_time.isoformat() if self.available_start_time else None,
+            "available_end_time": self.available_end_time.isoformat() if self.available_end_time else None,
             "views": self.views,
             "applications": self.applications
         }

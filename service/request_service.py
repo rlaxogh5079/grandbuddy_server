@@ -2,19 +2,22 @@ from repository.application_repository import ApplicationRepository
 from model.application import Application, ApplicationStatus
 from repository.request_repository import RequestRepository
 from model.response import Detail, ResponseStatusCode
+from datetime import datetime, timezone, date, time
 from model.request import Request, RequestStatus
-from datetime import datetime, timezone
 from typing import List, Tuple
 
 
 class RequestService:
     @staticmethod
-    async def create_request(senior_uuid: str, title: str, description: str | None = None) -> Tuple[ResponseStatusCode, Request | Detail]:
+    async def create_request(senior_uuid: str, title: str, description: str | None = None, available_date: date | None = None, available_start_time: time | None = None, available_end_time: time | None = None) -> Tuple[ResponseStatusCode, Request | Detail]:
         try:
             new_request = Request(
                 senior_uuid=senior_uuid,
                 title=title,
                 description=description,
+                date=date,
+                available_start_time=available_start_time,
+                available_end_time=available_end_time,
             )
             await RequestRepository.create_request(new_request)
             return ResponseStatusCode.CREATED, new_request
@@ -103,5 +106,4 @@ class RequestService:
         if not application:
             return ResponseStatusCode.NOT_FOUND, Detail(text="신청을 찾을 수 없습니다.")
         await ApplicationRepository.update_application_status(application_uuid, ApplicationStatus.accepted.value)
-        # 실제 매칭 객체 생성 로직 추가(생략)
         return ResponseStatusCode.SUCCESS, None

@@ -7,9 +7,9 @@ from enum import Enum
 import uuid
 
 class MatchStatus(Enum):
-    accepted = 0 # 수락 됨
-    declined = 1 # 거절 됨
-    completed = 2 # 완료 됨
+    active = 0       # 매칭 진행 중 (수락됨)
+    declined = 1     # 거절됨/취소
+    completed = 2    # 완료됨
 
 class Match(Base):
     __tablename__ = "match"

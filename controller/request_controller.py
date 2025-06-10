@@ -1,6 +1,7 @@
 from model.schema.request import CreateRequestModel, UpdateRequestStatusModel
 from model.response import ResponseModel, ResponseStatusCode, Detail
 from service.request_service import RequestService
+from service.match_service import MatchService
 from service.user_service import UserService
 from fastapi import APIRouter, Depends, Path
 from model.schema.user import UserRole
@@ -32,6 +33,7 @@ async def create_request(
         return ResponseModel.show_json(status_code, message = "요청 생성 실패", detail=result.text)
 
     return ResponseModel.show_json(status_code, message = "요청이 성공적으로 생성되었습니다.", request=result.get_attributes())
+
 
 @request_controller.get("/{request_uuid}", name="도움 요청 조회(views 카운트 증가)")
 async def get_request(
@@ -120,6 +122,9 @@ async def accept_application(
         return ResponseModel.show_json(status_code, message="유저 인증 실패", detail=user.text)
     # 권한 체크(생략)
     status, result = await RequestService.accept_application(application_uuid)
+    
     if status != ResponseStatusCode.SUCCESS:
         return ResponseModel.show_json(status, message="신청 수락 실패", detail=result.text)
+    
+    await MatchService.create_match(request_uuid, application_uuid)
     return ResponseModel.show_json(ResponseStatusCode.SUCCESS, message="신청 수락 및 매칭 생성")
