@@ -1,8 +1,10 @@
 from model.match import Match, MatchStatus
 from database.connection import DBObject
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.future import select
 from sqlalchemy import update, delete
+from model.user import User, UserRole
+from sqlalchemy.future import select
+from model.request import Request
 from typing import Optional
 from enum import Enum
 
@@ -35,14 +37,29 @@ class MatchRepository:
                 raise e
             
     @staticmethod
-    async def get_match_by_user_uuid(user_uuid: str) -> Optional[list[Match]]:
+    async def get_match_by_user_uuid(user: User) -> Optional[list[Match]]:
         async for session in DBObject.get_db():
             try:
-                result = await session.execute(
-                    select(Match).where(Match.youth_uuid == user_uuid)
-                )
-                return result.scalars().all()
-
+                if user.role == UserRole.youth:
+                    # 청년은 내가 수락한 매칭만
+                    result = await session.execute(
+                        select(Match).where(Match.youth_uuid == user.user_uuid)
+                    )
+                    return result.scalars().all()
+                elif user.role == UserRole.senior:
+                    # 노인은 내가 만든 요청의 매칭 모두
+                    reqs = await session.execute(
+                        select(Request.request_uuid).where(Request.senior_uuid == user.user_uuid)
+                    )
+                    req_uuid_list = [row[0] for row in reqs.fetchall()]
+                    if not req_uuid_list:
+                        return []
+                    result = await session.execute(
+                        select(Match).where(Match.request_uuid.in_(req_uuid_list))
+                    )
+                    return result.scalars().all()
+                else:
+                    return []
             except SQLAlchemyError as e:
                 print(f"Error: {e}")
                 await session.rollback()
