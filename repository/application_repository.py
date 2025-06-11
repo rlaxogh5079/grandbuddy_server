@@ -1,6 +1,6 @@
 # repository/application_repository.py
 from model.application import Application, ApplicationStatus
-from sqlalchemy import select, update
+from sqlalchemy import select, update, and_
 from sqlalchemy.exc import SQLAlchemyError
 from database.connection import DBObject
 
@@ -53,7 +53,12 @@ class ApplicationRepository:
     async def get_applications_by_request(request_uuid: str) -> list[Application]:
         async for session in DBObject.get_db():
             result = await session.execute(
-                select(Application).where(Application.request_uuid == request_uuid)
+                select(Application).where(
+                    and_(
+                        Application.request_uuid == request_uuid,
+                        Application.status == 'pending'
+                    )
+                )
             )
             return result.scalars().all()
         
