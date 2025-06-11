@@ -1,5 +1,5 @@
 # repository/application_repository.py
-from model.application import Application
+from model.application import Application, ApplicationStatus
 from sqlalchemy import select, update
 from sqlalchemy.exc import SQLAlchemyError
 from database.connection import DBObject
@@ -50,3 +50,16 @@ class ApplicationRepository:
                 select(Application).where(Application.request_uuid == request_uuid)
             )
             return result.scalars().all()
+        
+    @staticmethod
+    async def reject_other_applications(request_uuid: str, accepted_youth_uuid: str):
+        async for session in DBObject.get_db():
+            await session.execute(
+                update(Application)
+                .where(
+                    Application.request_uuid == request_uuid,
+                    Application.youth_uuid != accepted_youth_uuid
+                )
+                .values(status=ApplicationStatus.rejected.value)
+            )
+            await session.commit()

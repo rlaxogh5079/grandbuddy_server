@@ -154,9 +154,7 @@ from service.application_service import ApplicationService
 @request_controller.get("/{request_uuid}/applications", name="요청별 신청 목록")
 async def get_applications_for_request(
     request_uuid: str,
-    current_user: Tuple[ResponseStatusCode, User | Detail] = Depends(UserService.get_current_user)
 ):
-    # (선택) senior 권한 체크 필요시 여기에
     status, applications = await ApplicationService.get_applications_by_request(request_uuid)
     if status != ResponseStatusCode.SUCCESS:
         return ResponseModel.show_json(status, message="신청 목록 조회 실패")
