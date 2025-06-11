@@ -12,6 +12,7 @@ class ApplicationRepository:
                 session.add(application)
                 await session.commit()
             except SQLAlchemyError as e:
+                print(f"Error: {e}")
                 await session.rollback()
                 raise e
 
@@ -32,6 +33,7 @@ class ApplicationRepository:
                 )
                 await session.commit()
             except SQLAlchemyError as e:
+                print(f"Error: {e}")
                 await session.rollback()
                 raise e
 

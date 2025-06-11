@@ -21,6 +21,7 @@ class UserRepository:
                 await session.commit()
                 print(f"'{user.user_uuid}' 유저가 성공적으로 생성되었습니다!")
             except SQLAlchemyError as e:
+                print(f"Error: {e}")
                 await session.rollback()
                 raise e
 
@@ -33,6 +34,7 @@ class UserRepository:
                 await session.commit()
                 print(f"'{user.user_uuid}'의 정보가 성공적으로 업데이트 되었습니다.")
             except SQLAlchemyError as e:
+                print(f"Error: {e}")
                 await session.rollback()
                 raise e
 
@@ -45,6 +47,7 @@ class UserRepository:
                 await session.commit()
                 print(f"'{user.user_uuid}' 유저가 성공적으로 제거되었습니다!")
             except SQLAlchemyError as e:
+                print(f"Error: {e}")
                 await session.rollback()
                 raise e
 

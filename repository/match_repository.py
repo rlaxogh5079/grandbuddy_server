@@ -16,6 +16,7 @@ class MatchRepository:
                 await session.commit()
         
             except SQLAlchemyError as e:
+                print(f"Error: {e}")
                 await session.rollback()
                 raise e
 
@@ -29,6 +30,7 @@ class MatchRepository:
                 return result.scalar_one_or_none()
             
             except SQLAlchemyError as e:
+                print(f"Error: {e}")
                 await session.rollback()
                 raise e
             
@@ -42,6 +44,7 @@ class MatchRepository:
                 return result.scalars().all()
 
             except SQLAlchemyError as e:
+                print(f"Error: {e}")
                 await session.rollback()
                 raise e
 
@@ -57,6 +60,7 @@ class MatchRepository:
                 await session.commit()
 
             except SQLAlchemyError as e:
+                print(f"Error: {e}")
                 await session.rollback()
                 raise e
 
@@ -70,6 +74,7 @@ class MatchRepository:
                 await session.commit()
 
             except SQLAlchemyError as e:
+                print(f"Error: {e}")
                 await session.rollback()
                 raise e
             
@@ -83,6 +88,7 @@ class MatchRepository:
                 return result.scalar_one_or_none()
             
             except SQLAlchemyError as e:
+                print(f"Error: {e}")
                 await session.rollback()
                 raise e
             
@@ -96,6 +102,7 @@ class MatchRepository:
                 return result.scalar_one_or_none()
             
             except SQLAlchemyError as e:
+                print(f"Error: {e}")
                 await session.rollback()
                 raise e
     

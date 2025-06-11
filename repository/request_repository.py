@@ -12,6 +12,7 @@ class RequestRepository:
                 session.add(new_request)
                 await session.commit()
             except SQLAlchemyError as e:
+                print(f"Error: {e}")
                 await session.rollback()
                 raise e
 
@@ -40,6 +41,7 @@ class RequestRepository:
                 )
                 await session.commit()
             except SQLAlchemyError as e:
+                print(f"Error: {e}")
                 await session.rollback()
                 raise e
 
@@ -52,6 +54,7 @@ class RequestRepository:
                 )
                 await session.commit()
             except SQLAlchemyError as e:
+                print(f"Error: {e}")
                 await session.rollback()
                 raise e
     
@@ -70,6 +73,7 @@ class RequestRepository:
                 await session.merge(request)
                 await session.commit()
             except SQLAlchemyError as e:
+                print(f"Error: {e}")
                 await session.rollback()
                 raise e
             

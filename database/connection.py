@@ -52,5 +52,6 @@ class DBObject:
             try:
                 yield session
             except SQLAlchemyError as e:
+                print(f"Error: {e}")
                 await session.rollback()
                 raise e
