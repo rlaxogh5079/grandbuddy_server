@@ -69,19 +69,6 @@ class ApplicationRepository:
             return result.scalars().first()
 
     @staticmethod
-    async def get_applications_by_request(request_uuid: str) -> list[Application]:
-        async for session in DBObject.get_db():
-            result = await session.execute(
-                select(Application).where(
-                    and_(
-                        Application.request_uuid == request_uuid,
-                        Application.status == 'pending'
-                    )
-                )
-            )
-            return result.scalars().all()
-        
-    @staticmethod
     async def reject_other_applications(request_uuid: str, accepted_youth_uuid: str):
         async for session in DBObject.get_db():
             await session.execute(
