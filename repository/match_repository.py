@@ -37,7 +37,7 @@ class MatchRepository:
                 raise e
             
     @staticmethod
-    async def get_match_by_user_uuid(user: User) -> Optional[list[Match]]:
+    async def get_match_by_user(user: User) -> Optional[list[Match]]:
         async for session in DBObject.get_db():
             try:
                 if user.role == UserRole.youth:
