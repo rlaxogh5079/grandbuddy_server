@@ -45,7 +45,7 @@ async def get_request(
     request = await RequestService.view_request_and_increase_views(request_uuid)
     if not request:
         return ResponseModel.show_json(ResponseStatusCode.NOT_FOUND, message="요청 없음")
-    return ResponseModel.show_json(ResponseStatusCode.SUCCESS, request=request.get_attributes())
+    return ResponseModel.show_json(ResponseStatusCode.SUCCESS, message="성공 조회", request=request.get_attributes())
 
 
 # 3. senior가 만든 요청들 전체 조회
