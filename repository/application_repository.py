@@ -43,7 +43,7 @@ class ApplicationRepository:
             result = await session.execute(
                 select(Application).where(Application.youth_uuid == youth_uuid)
             )
-            app = result.scalars().first()
+            app = result.scalars().all()
             if app:
                 return app
             
