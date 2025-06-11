@@ -164,3 +164,18 @@ async def get_applications_for_request(
         message="신청 목록",
         applications=[a.get_attributes() for a in applications]
     )
+    
+@request_controller.delete("/{request_uuid}/application", name="신청 취소")
+async def cancel_application(
+    request_uuid: str,
+    current_user = Depends(UserService.get_current_user)
+):
+    status, user = current_user
+    if isinstance(user, Detail):
+        return ResponseModel.show_json(status, message="유저 인증 실패", detail=user.text)
+    # 실제 취소 서비스 호출
+    status, detail = await ApplicationService.cancel_application(request_uuid, user.user_uuid)
+    if status == ResponseStatusCode.SUCCESS:
+        return ResponseModel.show_json(status, message="신청 취소 완료")
+    else:
+        return ResponseModel.show_json(status, message="신청 취소 실패", detail=detail.text)

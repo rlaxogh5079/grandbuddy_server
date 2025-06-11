@@ -1,6 +1,6 @@
 # repository/application_repository.py
 from model.application import Application, ApplicationStatus
-from sqlalchemy import select, update, and_
+from sqlalchemy import select, update, and_, delete
 from sqlalchemy.exc import SQLAlchemyError
 from database.connection import DBObject
 
@@ -72,5 +72,18 @@ class ApplicationRepository:
                     Application.youth_uuid != accepted_youth_uuid
                 )
                 .values(status=ApplicationStatus.rejected.value)
+            )
+            await session.commit()
+            
+    @staticmethod
+    async def cancel_application(request_uuid: str, youth_uuid: str):
+        async for session in DBObject.get_db():
+            # 방법1: 신청 완전 삭제
+            await session.execute(
+                delete(Application).where(
+                    Application.request_uuid == request_uuid,
+                    Application.youth_uuid == youth_uuid,
+                    Application.status == "pending"
+                )
             )
             await session.commit()
