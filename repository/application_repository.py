@@ -53,10 +53,10 @@ class ApplicationRepository:
     async def get_application_by_youth_and_request_uuid(youth_uuid: str, request_uuid: str):
         async for session in DBObject.get_db():
             result = await session.execute(
-                and_(
+                select(Application).where(and_(
                         Application.request_uuid == request_uuid,
                         Application.youth_uuid == youth_uuid
-                    )
+                    ))
             )
             return result.scalars().first()
         
