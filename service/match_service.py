@@ -14,7 +14,7 @@ class MatchService:
             match = Match(
                 request_uuid=request_uuid,
                 youth_uuid=youth_uuid,
-                status=MatchStatus.accepted,
+                status=MatchStatus.active,
                 created=datetime.now(timezone.utc)
             )
             await MatchRepository.create_match(match)

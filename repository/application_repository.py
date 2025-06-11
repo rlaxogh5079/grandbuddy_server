@@ -24,11 +24,11 @@ class ApplicationRepository:
             return result.scalars().all()
 
     @staticmethod
-    async def update_application_status(youth_uuid: str, status: str):
+    async def update_application_status(application_uuid: str, status: str):
         async for session in DBObject.get_db():
             try:
                 await session.execute(
-                    update(Application).where(Application.youth_uuid == youth_uuid).values(status=status)
+                    update(Application).where(Application.application_uuid == application_uuid).values(status=status)
                 )
                 await session.commit()
             except SQLAlchemyError as e:

@@ -106,7 +106,7 @@ class RequestService:
         application = await ApplicationRepository.get_application_by_uuid(youth_uuid)
         if not application:
             return ResponseStatusCode.NOT_FOUND, Detail(text="신청을 찾을 수 없습니다.")
-        await ApplicationRepository.update_application_status(youth_uuid, ApplicationStatus.accepted.value)
+        await ApplicationRepository.update_application_status(application.application_uuid, ApplicationStatus.accepted.value)
         await ApplicationRepository.reject_other_applications(request_uuid, youth_uuid)
         return ResponseStatusCode.SUCCESS, None
     
