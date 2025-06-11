@@ -128,7 +128,7 @@ async def accept_application(
     if isinstance(user, Detail):
         return ResponseModel.show_json(status_code, message="유저 인증 실패", detail=user.text)
     # 권한 체크(생략)
-    status, result = await RequestService.accept_application(youth_uuid)
+    status, result = await RequestService.accept_application(request_uuid, youth_uuid)
     
     if status != ResponseStatusCode.SUCCESS:
         return ResponseModel.show_json(status, message="신청 수락 실패", detail=result.text)
