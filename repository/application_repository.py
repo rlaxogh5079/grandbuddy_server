@@ -41,7 +41,11 @@ class ApplicationRepository:
             result = await session.execute(
                 select(Application).where(Application.youth_uuid == youth_uuid)
             )
-            return result.scalars().all()
+            app = result.scalras().first()
+            if app:
+                return app
+            
+            return []
 
     @staticmethod
     async def get_applications_by_request(request_uuid: str) -> list[Application]:
