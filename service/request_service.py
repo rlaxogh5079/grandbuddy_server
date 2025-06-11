@@ -103,7 +103,7 @@ class RequestService:
 
     @staticmethod
     async def accept_application(request_uuid: str, youth_uuid: str):
-        application = await ApplicationRepository.get_application_by_uuid(youth_uuid)
+        application = await ApplicationRepository.get_application_by_youth_and_request_uuid(youth_uuid, request_uuid)
         if not application:
             return ResponseStatusCode.NOT_FOUND, Detail(text="신청을 찾을 수 없습니다.")
         await ApplicationRepository.update_application_status(application.application_uuid, ApplicationStatus.accepted.value)
@@ -113,7 +113,7 @@ class RequestService:
     @staticmethod
     async def get_requests_by_applicant(youth_uuid: str):
         try:
-            applications = await ApplicationRepository.get_application_by_uuid(youth_uuid)
+            applications = await ApplicationRepository.get_application_by_youth_uuid(youth_uuid)
             # 신청한 요청들의 request_uuid 모아서 해당 요청 리스트 조회
             print(applications)
             request_uuids = [app.request_uuid for app in applications]

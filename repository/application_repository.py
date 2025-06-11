@@ -38,7 +38,7 @@ class ApplicationRepository:
                 raise e
 
     @staticmethod
-    async def get_application_by_uuid(youth_uuid: str):
+    async def get_application_by_youth_uuid(youth_uuid: str):
         async for session in DBObject.get_db():
             result = await session.execute(
                 select(Application).where(Application.youth_uuid == youth_uuid)
@@ -48,6 +48,25 @@ class ApplicationRepository:
                 return app
             
             return []
+        
+    @staticmethod
+    async def get_application_by_youth_and_request_uuid(youth_uuid: str, request_uuid: str):
+        async for session in DBObject.get_db():
+            result = await session.execute(
+                and_(
+                        Application.request_uuid == request_uuid,
+                        Application.youth_uuid == youth_uuid
+                    )
+            )
+            return result.scalars().first()
+        
+    @staticmethod
+    async def get_application_by_uuid(application_uuid: str):
+        async for session in DBObject.get_db():
+            result = await session.execute(
+                select(Application).where(Application.application_uuid == application_uuid)
+            )
+            return result.scalars().first()
 
     @staticmethod
     async def get_applications_by_request(request_uuid: str) -> list[Application]:
