@@ -32,7 +32,7 @@ async def upload_profile_image(
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    await UserService.update_user(profile = f"/static/uploads/{filename}")
+    await UserService.update_user(user, profile = f"/static/uploads/{filename}")
     await db.commit()
 
     return ResponseModel.show_json(
