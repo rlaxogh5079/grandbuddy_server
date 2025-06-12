@@ -10,8 +10,10 @@ from repository.message_repository import MessageRepository
 from database.connection import DBObject  # 세션 종속성
 import uuid
 from model.response import ResponseModel, ResponseStatusCode
+import json
 
 chat_router = APIRouter()
+
 
 @chat_router.websocket("/ws/chat/{match_uuid}/{sender_uuid}/{receiver_uuid}")
 async def chat(
@@ -35,7 +37,14 @@ async def chat(
             )
 
             await MessageRepository.save_message(message_obj)
-            await manager.broadcast(match_uuid, f"'{sender_uuid}': {data}")
+
+            # ✅ JSON 형태로 브로드캐스트
+            await manager.broadcast(match_uuid, json.dumps({
+                "sender_uuid": sender_uuid,
+                "receiver_uuid": receiver_uuid,
+                "message": data,
+                "created": message_obj.created.isoformat()
+            }))
     except WebSocketDisconnect:
         manager.disconnect(match_uuid, websocket)
 
