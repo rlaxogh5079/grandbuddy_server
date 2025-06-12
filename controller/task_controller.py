@@ -1,4 +1,5 @@
 from model.schema.task import CreateTaskModel, UpdateTaskModel
+from model.task import TaskStatus
 from model.response import ResponseModel, Detail
 from service.task_service import TaskService
 from service.user_service import UserService
@@ -54,8 +55,14 @@ async def update_task(task_uuid: str, data: UpdateTaskModel, current_user: User 
     return ResponseModel.show_json(status_code=status_code, message=result)
 
 @task_controller.patch("/{task_uuid}/complete", name="할 일 완료 처리")
-async def complete_task(task_uuid: str):
-    status_code, result = await TaskService.complete_task(task_uuid)
+async def complete_task(task_uuid: str, current_user: User = Depends(UserService.get_current_user)):
+    status, user = current_user
+    if isinstance(user, Detail):
+        return ResponseModel.show_json(status, message="유저 인증 실패", detail=user.text)
+    
+    status_code, result = await TaskService.update_task(task_uuid, user.user_uuid, {
+        "status": TaskStatus.completed
+    })
     if isinstance(result, Detail):
         return ResponseModel.show_json(status_code=status_code, message="할 일 완료 처리 실패", detail=result.text)
     return ResponseModel.show_json(status_code=status_code, message=result)
