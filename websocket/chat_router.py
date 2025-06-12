@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from model.message import Message
 from repository.message_repository import MessageRepository
-from database.connection import get_db  # 세션 종속성
+from database.connection import DBObject  # 세션 종속성
 import uuid
 from model.response import ResponseModel, ResponseStatusCode
 
@@ -41,7 +41,7 @@ async def chat(
 
 
 @chat_router.get("/last/{match_uuid}")
-async def get_last_message(match_uuid: str, session: AsyncSession = Depends(get_db)):
+async def get_last_message(match_uuid: str, session: AsyncSession = Depends(DBObject.get_db)):
     try:
         message = await MessageRepository.get_last_message_by_match(session, match_uuid)
         if message:
