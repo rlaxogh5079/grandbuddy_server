@@ -67,7 +67,7 @@ async def get_last_message(match_uuid: str, session: AsyncSession = Depends(DBOb
         
 @chat_router.get("/message/list/{match_uuid}")
 async def get_messages(match_uuid: str, session: AsyncSession = Depends(DBObject.get_db)):
-    messages = await MessageRepository.get_messages_by_match(session, match_uuid)
+    messages = await MessageRepository.get_messages_by_match(match_uuid)
     return ResponseModel.show_json(ResponseStatusCode.SUCCESS, messages=[
         {
             "sender_uuid": m.sender_uuid,
