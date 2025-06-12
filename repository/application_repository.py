@@ -28,7 +28,7 @@ class ApplicationRepository:
     async def get_application_by_request_with_match(request_uuid: str):
         async for session in DBObject.get_db():
             result = await session.execute(
-                select(Application).where(and_(Application.request_uuid == request_uuid, Application.status == ApplicationStatus.accepted))
+                select(Application).where(and_(Application.request_uuid == request_uuid, Application.status == ApplicationStatus.accepted.value))
             )
             return result.scalars().first()
 
