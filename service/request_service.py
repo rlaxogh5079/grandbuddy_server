@@ -125,3 +125,12 @@ class RequestService:
             return ResponseStatusCode.SUCCESS, requests
         except Exception as e:
             return ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(text=str(e))
+        
+    @staticmethod
+    async def get_request_by_user_uuid(user_uuid: str):
+        try:
+            requests = await RequestService.get_request_by_user_uuid(user_uuid)
+            return ResponseStatusCode.SUCCESS, requests
+            
+        except Exception as e:
+            return ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(text=str(e))

@@ -84,3 +84,12 @@ class RequestRepository:
                 select(Application).where(Application.youth_uuid == youth_uuid)
             )
             return result.scalars().all()
+        
+    @staticmethod
+    async def get_request_by_user_uuid(user_uuid: str):
+        async for session in DBObject.get_db():
+            result = await session.execute(
+                select(Request).where(Request.senior_uuid == user_uuid)
+            )
+            
+            return result.scalars().all()

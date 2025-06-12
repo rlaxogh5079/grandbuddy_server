@@ -63,6 +63,13 @@ async def get_my_requests(
 
     return ResponseModel.show_json(status_code, message = "요청 목록 조회 성공", requests=list(map(lambda x: x.get_attributes(), result)))
 
+@request_controller.get("/user/{user_uuid}")
+async def get_request_by_user_uuid(user_uuid: str):
+    status_code, result = await RequestService.get_request_by_user_uuid(user_uuid)
+    if isinstance(result, Detail):
+        return ResponseModel.show_json(status_code = status_code, message = "오류 발생", detail = result.text)
+    
+    return ResponseModel.show_json(status_code, message="신청 목록 조회 성공", requests=[r.get_attributes() for r in result])
 # 4. 요청 상태 변경
 @request_controller.patch("/{request_uuid}/status", name="요청 상태 변경")
 async def update_request_status(
@@ -179,3 +186,4 @@ async def cancel_application(
         return ResponseModel.show_json(status, message="신청 취소 완료")
     else:
         return ResponseModel.show_json(status, message="신청 취소 실패", detail=detail.text)
+    
