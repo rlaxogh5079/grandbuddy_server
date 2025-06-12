@@ -71,6 +71,20 @@ async def get_my_match(
         return ResponseModel.show_json(status_code = status_code, message = "매칭 검색 성공")    
     return ResponseModel.show_json(status_code = status_code, message = "매칭 검색 성공", matches = list(map(lambda x: x.get_attributes(), result)))
 
+
+@match_controller.get("/match/user/{user_uuid}")
+async def get_matches_by_user(user_uuid: str):
+    status_code, result = await UserService.get_user(user_uuid)
+    if isinstance(result, Detail):
+        return ResponseModel.show_json(status_code = status_code, message = "유저를 찾을 수 없습니다.", detail = result.text)
+    
+    user = result
+    status_code, result = await MatchService.get_match_by_user(user)
+    if status_code != ResponseStatusCode.SUCCESS:
+        return ResponseModel.show_json(status_code = status_code, message = "매칭 검색 성공")    
+    return ResponseModel.show_json(status_code = status_code, message = "매칭 검색 성공", matches = list(map(lambda x: x.get_attributes(), result)))
+    
+
 @match_controller.patch("/complete/{match_uuid}")
 async def complete_match(
     match_uuid: str,
