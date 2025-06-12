@@ -17,3 +17,14 @@ class MessageRepository:
                 select(Message).where(Message.match_uuid == match_uuid)
             )
             return result.scalars().all()
+
+    @staticmethod
+    async def get_last_message_by_match(session, match_uuid: str):
+        stmt = (
+            select(Message)
+            .where(Message.match_uuid == match_uuid)
+            .order_by(Message.created.desc())
+            .limit(1)
+        )
+        result = await session.execute(stmt)
+        return result.scalar_one_or_none()
