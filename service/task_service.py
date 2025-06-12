@@ -16,7 +16,7 @@ class TaskService:
                 created=datetime.now(timezone.utc)
             )
             await TaskRepository.create_task(task)
-            return ResponseStatusCode.CREATED, task.task_uuid
+            return ResponseStatusCode.CREATED, task
         except Exception as e:
             return ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(text=str(e))
 
