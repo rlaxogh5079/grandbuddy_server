@@ -41,3 +41,14 @@ class Task(Base):
             ["user.user_uuid"]
         )
     )
+    
+    def get_attributes(self) -> dict:
+        return {
+            "task_uuid": self.task_uuid,
+            "user_uuid": self.user_uuid,
+            "title": self.title,
+            "description": self.description,
+            "status": self.status.name,  # Enum 이름 (e.g. 'pending')
+            "created": self.created.isoformat(),
+            "dueDate": self.dueDate.isoformat(),
+        }

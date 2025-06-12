@@ -21,7 +21,7 @@ async def create_task(data: CreateTaskModel, current_user: User = Depends(UserSe
     )
     if isinstance(result, Detail):
         return ResponseModel.show_json(status_code=status_code, message="할 일 생성 실패", detail=result.text)
-    return ResponseModel.show_json(status_code=status_code, message="할 일 생성 성공", task=result)
+    return ResponseModel.show_json(status_code=status_code, message="할 일 생성 성공", task=result.get_attributes())
 
 @task_controller.get("/senior/{senior_uuid}", name="senior의 할 일 목록 조회")
 async def get_tasks(senior_uuid: str):
