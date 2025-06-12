@@ -58,8 +58,7 @@ class MatchRepository:
                         select(Match).where(Match.request_uuid.in_(req_uuid_list))
                     )
                     return result.scalars().all()
-                else:
-                    return []
+            
             except SQLAlchemyError as e:
                 print(f"Error: {e}")
                 await session.rollback()

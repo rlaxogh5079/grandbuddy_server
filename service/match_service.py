@@ -56,10 +56,8 @@ class MatchService:
     async def get_match_by_user(user: User) -> tuple[ResponseStatusCode, list[Match] | Detail]:
         try:
             result = await MatchRepository.get_match_by_user(user)
-            if result is None or len(result) == 0:
-                return ResponseStatusCode.NOT_FOUND, Detail(text="해당 매칭을 찾을 수 없습니다.")
-            else:
-                return ResponseStatusCode.SUCCESS, result
+            return ResponseStatusCode.SUCCESS, result
+        
         except Exception as e:
             return ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(text=str(e))
     
