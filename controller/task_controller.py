@@ -28,7 +28,7 @@ async def get_tasks(senior_uuid: str):
     status_code, result = await TaskService.get_tasks_by_senior(senior_uuid)
     if isinstance(result, Detail):
         return ResponseModel.show_json(status_code=status_code, message="할 일 조회 실패", detail=result.text)
-    return ResponseModel.show_json(status_code=status_code, message="할 일 목록 조회 성공", tasks=result)
+    return ResponseModel.show_json(status_code=status_code, message="할 일 목록 조회 성공", tasks=[r.get_attributes() for r in result])
 
 @task_controller.get("/{task_uuid}", name="할 일 상세 조회")
 async def get_task_detail(task_uuid: str):
