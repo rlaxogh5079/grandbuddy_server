@@ -9,11 +9,15 @@ task_controller = APIRouter(prefix="/task", tags=["task"])
 
 @task_controller.post("", name="할 일 생성")
 async def create_task(data: CreateTaskModel, current_user: User = Depends(UserService.get_current_user)):
-    if current_user.role.name != "senior":
+    status, user = current_user
+    if isinstance(user, Detail):
+        return ResponseModel.show_json(status, message="유저 인증 실패", detail=user.text)
+    
+    if user.role.name != "senior":
         return ResponseModel.show_json(status_code=400, message="senior만 할 일을 생성할 수 있습니다.")
 
     status_code, result = await TaskService.create_task(
-        current_user.user_uuid, data.title, data.description, data.dueDate
+        user.user_uuid, data.title, data.description, data.dueDate
     )
     if isinstance(result, Detail):
         return ResponseModel.show_json(status_code=status_code, message="할 일 생성 실패", detail=result.text)
@@ -35,11 +39,15 @@ async def get_task_detail(task_uuid: str):
 
 @task_controller.patch("/{task_uuid}", name="할 일 수정")
 async def update_task(task_uuid: str, data: UpdateTaskModel, current_user: User = Depends(UserService.get_current_user)):
-    if current_user.role.name != "senior":
+    status, user = current_user
+    if isinstance(user, Detail):
+        return ResponseModel.show_json(status, message="유저 인증 실패", detail=user.text)
+    
+    if user.role.name != "senior":
         return ResponseModel.show_json(status_code=400, message="senior만 할 일을 수정할 수 있습니다.")
     
     updates = data.dict(exclude_unset=True)
-    status_code, result = await TaskService.update_task(task_uuid, current_user.user_uuid, updates)
+    status_code, result = await TaskService.update_task(task_uuid, user.user_uuid, updates)
     
     if isinstance(result, Detail):
         return ResponseModel.show_json(status_code=status_code, message="할 일 수정 실패", detail=result.text)
