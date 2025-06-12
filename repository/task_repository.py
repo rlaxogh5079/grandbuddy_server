@@ -10,7 +10,7 @@ class TaskRepository:
     async def create_task(task: Task) -> None:
         async for session in DBObject.get_db():
             session.add(task)
-            await session.flush()
+            await session.commit()
 
     @staticmethod
     async def get_tasks_by_senior(senior_uuid: str) -> List[Task]:
