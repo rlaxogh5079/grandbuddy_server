@@ -113,14 +113,12 @@ class ApplicationRepository:
             await session.commit()
             
     @staticmethod
-    async def reject_application(
-        request_uuid: str, youth_uuid: str
-    ):
+    async def reject_application(request_uuid: str, youth_uuid: str):
         async for session in DBObject.get_db():
             await session.execute(
                 update(Application).where(
                     Application.request_uuid == request_uuid,
                     Application.youth_uuid == youth_uuid
-                )
-            ).values(status=ApplicationStatus.rejected.value)
+                ).values(status=ApplicationStatus.rejected.value)
+            )
             await session.commit()
