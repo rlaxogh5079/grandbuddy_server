@@ -69,7 +69,7 @@ async def get_request_by_user_uuid(user_uuid: str):
     if isinstance(result, Detail):
         return ResponseModel.show_json(status_code = status_code, message = "오류 발생", detail = result.text)
     
-    return ResponseModel.show_json(status_code, message="신청 목록 조회 성공", requests=[r.get_attributes() for r in result])
+    return ResponseModel.show_json(status_code = status_code, message="신청 목록 조회 성공", requests=list(map(lambda x: x.get_attributes(), result)))
 # 4. 요청 상태 변경
 @request_controller.patch("/{request_uuid}/status", name="요청 상태 변경")
 async def update_request_status(
