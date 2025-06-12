@@ -9,7 +9,7 @@ class RewardRepository:
     async def create_reward(reward: Reward) -> None:
         async for session in DBObject.get_db():
             session.add(reward)
-            await session.flush()
+            await session.commit()
 
     @staticmethod
     async def get_rewards_by_youth_uuid(youth_uuid: str) -> List[Reward]:

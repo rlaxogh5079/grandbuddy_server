@@ -10,7 +10,7 @@ class ReviewRepository:
     async def create_review(review: Review) -> None:
         async for session in DBObject.get_db():
             session.add(review)
-            await session.flush()
+            await session.commit()
 
     @staticmethod
     async def get_review_by_request_uuid(request_uuid: str) -> Optional[Review]:
@@ -26,7 +26,7 @@ class ReviewRepository:
             await session.execute(
                 delete(Review).where(Review.review_uuid == review_uuid)
             )
-            await session.flush()
+            await session.commit()
 
     @staticmethod
     async def update_review(review_uuid: str, rating: float, content: str | None) -> None:
@@ -36,4 +36,4 @@ class ReviewRepository:
                 .where(Review.review_uuid == review_uuid)
                 .values(rating=rating, content=content)
             )
-            await session.flush()
+            await session.commit()

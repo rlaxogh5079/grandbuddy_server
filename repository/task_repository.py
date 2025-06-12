@@ -36,19 +36,10 @@ class TaskRepository:
                 .where(Task.task_uuid == task_uuid)
                 .values(**updates)
             )
-            await session.flush()
+            await session.commit()
 
     @staticmethod
     async def delete_task(task_uuid: str) -> None:
         async for session in DBObject.get_db():
             await session.execute(delete(Task).where(Task.task_uuid == task_uuid))
-            await session.flush()
-
-    @staticmethod
-    async def complete_task(task_uuid: str) -> None:
-        async for session in DBObject.get_db():
-            await session.execute(
-                update(Task).where(Task.task_uuid == task_uuid)
-                .values(status=TaskStatus.completed)
-            )
-            await session.flush()
+            await session.commit()
