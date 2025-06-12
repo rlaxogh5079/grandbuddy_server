@@ -72,7 +72,7 @@ async def get_my_match(
     return ResponseModel.show_json(status_code = status_code, message = "매칭 검색 성공", matches = list(map(lambda x: x.get_attributes(), result)))
 
 
-@match_controller.get("/match/user/{user_uuid}")
+@match_controller.get("/user/{user_uuid}")
 async def get_matches_by_user(user_uuid: str):
     status_code, result = await UserService.get_user(user_uuid)
     if isinstance(result, Detail):
