@@ -134,3 +134,12 @@ class RequestService:
             
         except Exception as e:
             return ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(text=str(e))
+        
+    @staticmethod
+    async def reject_application(request_uuid: str, youth_uuid: str):
+        try:
+            await ApplicationRepository.reject_application(request_uuid, youth_uuid)
+            return ResponseStatusCode.SUCCESS, None
+        
+        except Exception as e:
+            return ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(text=str(e))

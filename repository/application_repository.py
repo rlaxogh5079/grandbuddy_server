@@ -23,6 +23,14 @@ class ApplicationRepository:
                 select(Application).where(Application.request_uuid == request_uuid)
             )
             return result.scalars().all()
+        
+    @staticmethod
+    async def get_application_by_request_with_match(request_uuid: str):
+        async for session in DBObject.get_db():
+            result = await session.execute(
+                select(Application).where(and_(Application.request_uuid == request_uuid, Application.status == ApplicationStatus.accepted))
+            )
+            return result.scalars().first()
 
     @staticmethod
     async def update_application_status(application_uuid: str, status: str):
@@ -92,4 +100,27 @@ class ApplicationRepository:
                     Application.status == "pending"
                 )
             )
+            await session.commit()
+            
+    @staticmethod
+    async def delete_application(application_uuid: str):
+        async for session in DBObject.get_db():
+            await session.execute(
+                delete(Application).where(
+                    Application.application_uuid == application_uuid
+                )
+            )
+            await session.commit()
+            
+    @staticmethod
+    async def reject_application(
+        request_uuid: str, youth_uuid: str
+    ):
+        async for session in DBObject.get_db():
+            await session.execute(
+                update(Application).where(
+                    Application.request_uuid == request_uuid,
+                    Application.youth_uuid == youth_uuid
+                )
+            ).values(status=ApplicationStatus.rejected.value)
             await session.commit()

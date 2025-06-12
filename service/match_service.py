@@ -1,3 +1,4 @@
+from repository.application_repository import ApplicationRepository
 from repository.match_repository import MatchRepository
 from model.response import ResponseStatusCode, Detail
 from service.request_service import RequestService
@@ -32,10 +33,13 @@ class MatchService:
             return ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(text=str(e))
 
     @staticmethod
-    async def delete_match(request_uuid: str, match_uuid: str) -> tuple[ResponseStatusCode, str | Detail]:
+    async def delete_match(match_uuid: str) -> tuple[ResponseStatusCode, str | Detail]:
         try:
+            match_object = await MatchRepository.get_match_by_match_uuid(match_uuid)
             await MatchRepository.delete_match(match_uuid)
-            await RequestService.update_request_status(request_uuid, status_value = RequestStatus.pending)
+            await RequestService.update_request_status(match_object.request_uuid, status_value = RequestStatus.pending)
+            application = await ApplicationRepository.get_application_by_request_with_match(match_object.request_uuid)
+            await ApplicationRepository.delete_application(application.application_uuid)
             return ResponseStatusCode.SUCCESS, "매칭 삭제 완료"
         except Exception as e:
             return ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(text=str(e))
