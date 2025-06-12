@@ -36,9 +36,9 @@ class MatchService:
     async def delete_match(match_uuid: str) -> tuple[ResponseStatusCode, str | Detail]:
         try:
             match_object = await MatchRepository.get_match_by_match_uuid(match_uuid)
-            await MatchRepository.delete_match(match_uuid)
             await RequestService.update_request_status(match_object.request_uuid, status_value = RequestStatus.pending)
             application = await ApplicationRepository.get_application_by_request_with_match(match_object.request_uuid)
+            await MatchRepository.delete_match(match_uuid)
             await ApplicationRepository.delete_application(application.application_uuid)
             return ResponseStatusCode.SUCCESS, "매칭 삭제 완료"
         except Exception as e:
