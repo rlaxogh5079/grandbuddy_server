@@ -64,3 +64,14 @@ async def get_last_message(match_uuid: str, session: AsyncSession = Depends(DBOb
             ResponseStatusCode.INTERNAL_SERVER_ERROR,
             detail=str(e)
         )
+        
+@chat_router.get("/message/list/{match_uuid}")
+async def get_messages(match_uuid: str, session: AsyncSession = Depends(DBObject.get_db)):
+    messages = await MessageRepository.get_messages_by_match(session, match_uuid)
+    return ResponseModel.show_json(ResponseStatusCode.SUCCESS, messages=[
+        {
+            "sender_uuid": m.sender_uuid,
+            "message": m.message,
+            "created": m.created.isoformat()
+        } for m in messages
+    ])
