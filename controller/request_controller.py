@@ -143,7 +143,7 @@ async def accept_application(
     await MatchService.create_match(request_uuid, youth_uuid)
     return ResponseModel.show_json(ResponseStatusCode.SUCCESS, message="신청 수락 및 매칭 생성")
 
-@request_controller.post("/{request_uuid}/accept/{youth_uuid}", name="신청 수락")
+@request_controller.post("/{request_uuid}/reject/{youth_uuid}", name="신청 수락")
 async def accept_application(
     request_uuid: str,
     youth_uuid: str,
