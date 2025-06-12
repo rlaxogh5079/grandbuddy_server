@@ -35,7 +35,7 @@ async def chat(
             )
 
             await MessageRepository.save_message(message_obj)
-            await manager.broadcast(match_uuid, f"{sender_uuid}: {data}")
+            await manager.broadcast(match_uuid, f"'{sender_uuid}': {data}")
     except WebSocketDisconnect:
         manager.disconnect(match_uuid, websocket)
 
