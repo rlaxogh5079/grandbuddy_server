@@ -61,7 +61,7 @@ async def complete_task(task_uuid: str, current_user: User = Depends(UserService
         return ResponseModel.show_json(status, message="유저 인증 실패", detail=user.text)
     
     status_code, result = await TaskService.update_task(task_uuid, user.user_uuid, {
-        "status": TaskStatus.completed
+        "status": "completed"
     })
     if isinstance(result, Detail):
         return ResponseModel.show_json(status_code=status_code, message="할 일 완료 처리 실패", detail=result.text)
