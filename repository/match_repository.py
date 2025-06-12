@@ -1,7 +1,7 @@
 from model.match import Match, MatchStatus
 from database.connection import DBObject
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import update, delete
+from sqlalchemy import update, delete, and_
 from model.user import User, UserRole
 from sqlalchemy.future import select
 from model.request import Request
@@ -27,7 +27,7 @@ class MatchRepository:
         async for session in DBObject.get_db():
             try:
                 result = await session.execute(
-                    select(Match).where(Match.request_uuid == request_uuid)
+                    select(Match).where(and_(Match.request_uuid == request_uuid, Match.status == MatchStatus.active))
                 )
                 return result.scalar_one_or_none()
             
@@ -89,20 +89,6 @@ class MatchRepository:
                 )
                 await session.commit()
 
-            except SQLAlchemyError as e:
-                print(f"Error: {e}")
-                await session.rollback()
-                raise e
-            
-    @staticmethod
-    async def search_match(request_uuid: str, youth_uuid: str) -> Optional[Match]:
-        async for session in DBObject.get_db():
-            try:
-                result = await session.execute(
-                    select(Match).where(Match.request_uuid == request_uuid and Match.youth_uuid == youth_uuid)
-                )
-                return result.scalar_one_or_none()
-            
             except SQLAlchemyError as e:
                 print(f"Error: {e}")
                 await session.rollback()

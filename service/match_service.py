@@ -39,18 +39,6 @@ class MatchService:
             return ResponseStatusCode.SUCCESS, "매칭 삭제 완료"
         except Exception as e:
             return ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(text=str(e))
-
-    @staticmethod
-    async def search_match(request_uuid: str, youth_uuid: str) -> tuple[ResponseStatusCode, str | Detail]:
-        try:
-            result = await MatchRepository.search_match(request_uuid, youth_uuid)
-            if result is None:
-                return ResponseStatusCode.NOT_FOUND, Detail(text = str("해당 매칭을 찾을 수 없습니다."))
-            else:
-                return ResponseStatusCode.SUCCESS, result
-            
-        except Exception as e:
-            return ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(text=str(e))
         
     @staticmethod
     async def get_match_by_user(user: User) -> tuple[ResponseStatusCode, list[Match] | Detail]:
@@ -82,4 +70,5 @@ class MatchService:
         
         except Exception as e:
                 return ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(text=str(e))
+    
             
