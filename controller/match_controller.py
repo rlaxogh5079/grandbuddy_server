@@ -81,7 +81,7 @@ async def get_matches_by_user(user_uuid: str):
     user = result
     status_code, result = await MatchService.get_match_by_user(user)
     if status_code != ResponseStatusCode.SUCCESS:
-        return ResponseModel.show_json(status_code = status_code, message = "매칭 검색 실패")    
+        return ResponseModel.show_json(status_code = status_code, message = "매칭 검색 실패", detail = result.text)    
     return ResponseModel.show_json(status_code = status_code, message = "매칭 검색 성공", matches = list(map(lambda x: x.get_attributes(), result)))
     
 
