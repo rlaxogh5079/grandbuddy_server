@@ -144,7 +144,7 @@ async def accept_application(
     return ResponseModel.show_json(ResponseStatusCode.SUCCESS, message="신청 수락 및 매칭 생성")
 
 @request_controller.post("/{request_uuid}/reject/{youth_uuid}", name="신청 수락")
-async def accept_application(
+async def reject_application(
     request_uuid: str,
     youth_uuid: str,
     current_user: Tuple[ResponseStatusCode, User | Detail] = Depends(UserService.get_current_user)
@@ -153,7 +153,7 @@ async def accept_application(
     if isinstance(user, Detail):
         return ResponseModel.show_json(status_code, message="유저 인증 실패", detail=user.text)
     # 권한 체크(생략)
-    status, result = await RequestService.reject_application(request_uuid, youth_uuid)
+    status, result = await RequestService.reject_application_service(request_uuid, youth_uuid)
     
     if status != ResponseStatusCode.SUCCESS:
         return ResponseModel.show_json(status, message="신청 거절 실패", detail=result.text)
