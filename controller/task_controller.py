@@ -72,4 +72,4 @@ async def delete_task(task_uuid: str):
     status_code, result = await TaskService.delete_task(task_uuid)
     if isinstance(result, Detail):
         return ResponseModel.show_json(status_code=status_code, message="할 일 삭제 실패", detail=result.text)
-    return ResponseModel.show_json(status_code=status_code, message=result)
+    return ResponseModel.show_json(status_code=status_code, message="할 일 삭제 성공")

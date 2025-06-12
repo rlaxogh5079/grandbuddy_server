@@ -60,3 +60,11 @@ class TaskService:
             return ResponseStatusCode.SUCCESS, "할 일 수정 성공"
         except Exception as e:
             return ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(text=str(e))
+        
+    @staticmethod
+    async def delete_task(task_uuid: str):
+        try:
+            await TaskRepository.delete_task(task_uuid)
+            return ResponseStatusCode.SUCCESS, None
+        except Exception as e:
+            return ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(text=str(e))
