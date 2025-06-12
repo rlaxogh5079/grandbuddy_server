@@ -129,7 +129,7 @@ class RequestService:
     @staticmethod
     async def get_request_by_user_uuid(user_uuid: str):
         try:
-            requests = await RequestService.get_request_by_user_uuid(user_uuid)
+            requests = await RequestRepository.get_request_by_user_uuid(user_uuid)
             return ResponseStatusCode.SUCCESS, requests
             
         except Exception as e:
