@@ -40,7 +40,7 @@ async def chat(
         manager.disconnect(match_uuid, websocket)
 
 
-@chat_router.get("/last/{match_uuid}")
+@chat_router.get("/message/last/{match_uuid}")
 async def get_last_message(match_uuid: str, session: AsyncSession = Depends(DBObject.get_db)):
     try:
         message = await MessageRepository.get_last_message_by_match(session, match_uuid)
