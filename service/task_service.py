@@ -24,16 +24,7 @@ class TaskService:
     async def get_tasks_by_senior(senior_uuid: str) -> tuple[ResponseStatusCode, List[dict] | Detail]:
         try:
             tasks = await TaskRepository.get_tasks_by_senior(senior_uuid)
-            return ResponseStatusCode.SUCCESS, [
-                {
-                    "task_uuid": t.task_uuid,
-                    "title": t.title,
-                    "description": t.description,
-                    "status": t.status.name,
-                    "created": t.created,
-                    "dueDate": t.dueDate,
-                } for t in tasks
-            ]
+            return ResponseStatusCode.SUCCESS, tasks
         except Exception as e:
             return ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(text=str(e))
 
