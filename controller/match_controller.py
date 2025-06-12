@@ -88,3 +88,14 @@ async def complete_match(
         return ResponseModel.show_json(status_code = status_code, messsage = "실패", detail = result.text)
     
     return ResponseModel.show_json(status_code = status_code, message = "성공")
+
+@match_controller.get("/{request_uuid}")
+async def get_match_by_request_uuid(
+    request_uuid: str
+):
+    status_code, result = await MatchService.get_match_by_request_uuid(request_uuid)
+    
+    if isinstance(result, Detail):
+        return ResponseModel.show_json(status_code = status_code, message = "찾을 수 없음", detail = result.text)
+    
+    return ResponseModel.show_json(status_code = status_code, message = "성공", match = result.get_attributes())

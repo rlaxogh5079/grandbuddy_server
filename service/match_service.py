@@ -69,6 +69,16 @@ class MatchService:
             return ResponseStatusCode.SUCCESS, "성공"
         
         except Exception as e:
-                return ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(text=str(e))
+            return ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(text=str(e))
     
+    @staticmethod
+    async def get_match_by_request_uuid(request_uuid: str) -> tuple[ResponseStatusCode, Match | Detail]:
+        try:
+            result = await MatchRepository.get_match_by_request_uuid(request_uuid)
+            if result is None:
+                return ResponseStatusCode.NOT_FOUND, "찾을 수 없음"
             
+            return ResponseStatusCode.SUCCESS, result
+            
+        except Exception as e:
+            return ResponseStatusCode.INTERNAL_SERVER_ERROR, Detail(text=str(e))
