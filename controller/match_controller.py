@@ -27,11 +27,7 @@ async def create_match(
 
 @match_controller.delete("/{match_uuid}", name="매칭 삭제")
 async def delete_match(match_uuid: str):
-    status_code, result = await MatchService.get_match_by_uuid(match_uuid)
-    if isinstance(result, Detail):
-        return ResponseModel.show_json(status_code=status_code, message="매칭 조회 실패", detail=result.text)
-    
-    status_code, result = await MatchService.delete_match(result.request_uuid, match_uuid)
+    status_code, result = await MatchService.delete_match(match_uuid)
     if isinstance(result, Detail):
         return ResponseModel.show_json(status_code=status_code, message="매칭 삭제 실패", detail=result.text)
     return ResponseModel.show_json(status_code=status_code, message="매칭 삭제 성공")
